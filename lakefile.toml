@@ -1,0 +1,10 @@
+name = "book"
+version = "0.1.0"
+defaultTargets = ["book"]
+
+[[lean_lib]]
+name = "Book"
+
+[[lean_exe]]
+name = "book"
+root = "Main"

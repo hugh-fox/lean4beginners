@@ -1,0 +1,9 @@
+- Follow along in the editor
+
+- `lake update` / `lake build`
+
+- `lake exe cache get` for mathlib
+- mathlib version
+- troubleshooting with `lake cache clean`
+
+Make a repo with theorem templates
