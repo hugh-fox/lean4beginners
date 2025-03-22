@@ -1,0 +1,1 @@
+Revisit decidablity and show an example of how adding Bool to a proposition can fix DecidablePred typeclass errors

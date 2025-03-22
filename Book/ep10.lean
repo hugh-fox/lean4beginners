@@ -1,8 +1,26 @@
 open Classical
 
+-- Lean's can prove by actually computing (decide)
+example : 2 + 3 = 5 := rfl
+
+example {p q r : Prop} ( h₁ : p = q) (h₂ : q = r) : p = r := by
+  subst h₁ -- rewrite q as p in h₂ to get h₂ : p = r
+  subst h₂ -- rewrite r as p in ⊢ to get p = p
+  rfl -- p = p
+
+example {p q r : Prop} ( h₁ : p = q) (h₂ : q = r) : p = r := by
+  rw [<- h₁] at h₂
+  rw [h₂]
+
+
+example {p q r : Prop} ( h₁ : p = q) (h₂ : q = r) : p = r := by
+  subst h₁
+  assumption -- use p = r to prove p = r directly
+
+
 -- same proof doesn't work with eq. We could rewrite with Eq.to_iff and use the
 -- previous proof or prove a contradiction:
-example : ¬(p = ¬p) := λ hn => by
+example {p} : ¬(p = ¬p) := λ hn => by
   obtain (hp | hnp) := Classical.em p
   · have hnp := by
       rw [hn] at hp
@@ -13,53 +31,43 @@ example : ¬(p = ¬p) := λ hn => by
       exact hnp
     exact hnp hp
 
-example : ¬(p = ¬p) := λ hn =>
+example {p} : ¬(p = ¬p) := λ hn =>
   match Classical.em p with
   | Or.inl hp => (hn ▸ hp) hp
   | Or.inr hnp => (hn ▸ hnp) hnp
 
--- an example that requires classical reasoning
-example (p q : Prop) : ¬(p ∧ ¬q) → (p → q) :=
-  fun h : ¬(p ∧ ¬q) =>
-  fun hp : p =>
-  show q from
-    Or.elim (em q)
-      (fun hq : q => hq)
-      (fun hnq : ¬q => absurd (And.intro hp hnq) h)
 
-example (p q : Prop) : ¬(p ∧ ¬q) → (p → q) := by
-  sorry
+-- same proof works for p → (p = p)
+example : ∀ x : Nat, x = x := by
+  intro x
+  rfl -- handles x = x
 
+example : ∀ x : Nat, x = x :=
+  Eq.refl
 
----
+example { x : Nat } : x = x :=
+  Eq.refl x
 
 
 -- exists / use
 example : ∃ x, x < 3 := by
-  sorry
+  exists 2
 
 -- specific case
 example (h : 1 < 3) : ∃ x, x < 3 :=
   Exists.intro 1 h
 
 -- general case
-example (h : x < 3) : ∃ x, x < 3 :=
+example {x : Nat} (h : x < 3) : ∃ x, x < 3 :=
   Exists.intro x h
 
 -- without an existing hypothesis
-example : ∃ x, x < 3 :=
-  sorry
+example : ∃ x, x < 3 := by
+  apply Exists.intro 1
+  exact Nat.lt_of_sub_eq_succ rfl
 
--- same proof works for p → (p = p)
-example : ∀ x : ℕ, x = x := by
-  intro x
-  rfl -- handles x = x
-
-example : ∀ x : ℕ, x = x :=
-  λ x => Eq.refl x
-
-example { x : ℕ } : x = x :=
-  Eq.refl x
+example : ∃ x, x < 3 := by
+  exact Exists.intro 1 (Nat.lt_of_sub_eq_succ rfl)
 
 -- convert to exists
 example : ¬∀ x, x < 3 := by
@@ -69,3 +77,20 @@ example : ¬∀ x, x < 3 := by
   refine Exists.intro 3 ?_ -- same as: `apply Exists.intro 3`
   rw [Nat.not_lt] -- this step isn't actually necessary
   trivial -- 3 ≤ 3
+
+
+-- review
+
+-- the book's solution
+example {p q} : ¬(p ∧ ¬q) → (p → q) :=
+  fun h : ¬(p ∧ ¬q) =>
+  fun hp : p =>
+  show q from
+    Or.elim (em q)
+      (fun hq : q => hq)
+      (fun hnq : ¬q => absurd (And.intro hp hnq) h)
+
+-- finally, a real proof byContradiction
+example {p q} : ¬(p ∧ ¬q) → (p → q) := by
+  intro hn_and hp
+  exact byContradiction λ hnq => hn_and ⟨ hp, hnq ⟩
