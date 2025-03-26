@@ -64,7 +64,9 @@ example {x : Nat} (h : x < 3) : ∃ x, x < 3 :=
 -- without an existing hypothesis
 example : ∃ x, x < 3 := by
   apply Exists.intro 1
-  exact Nat.lt_of_sub_eq_succ rfl
+  trivial
+  -- or with: simp only [Nat.reduceLT]
+  -- or with: exact Nat.lt_of_sub_eq_succ rfl
 
 example : ∃ x, x < 3 := by
   exact Exists.intro 1 (Nat.lt_of_sub_eq_succ rfl)

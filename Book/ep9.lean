@@ -26,6 +26,13 @@ example : ((p → q) → p) → p := by
     have hpq : p → q := False.elim ∘ hnp
     exact hpqp hpq
 
+-- A better way to do this using byContradiction, after recognizing we had a
+-- negation in the goal.
+example : ((p → q) → p) → p := λ hpqp =>
+  Classical.byContradiction λ hnp =>
+    have hpq : p → q := False.elim ∘ hnp
+    hnp (hpqp hpq)
+
 -- do this example without Classical
 example : ¬(p ↔ ¬p) := by
   rintro ⟨ hpnp : p → p → False, hnpp : (p → False) → p ⟩
