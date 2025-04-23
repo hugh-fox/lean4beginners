@@ -20,8 +20,6 @@ example : (∃ x, p x ∧ r) ↔ (∃ x, p x) ∧ r := by
   --   exact ⟨ hx, ⟨ px, hr ⟩ ⟩
   · rintro ⟨ ⟨ hx, px ⟩, hr ⟩
     exact ⟨ hx, ⟨ px, hr ⟩ ⟩
-example : (∃ x, p x ∨ q x) ↔ (∃ x, p x) ∨ (∃ x, q x) := by
-
 
 example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) := by
   constructor
@@ -33,11 +31,6 @@ example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) := by
     intro np
     exact nex ⟨ a, np ⟩
 
-example : (∃ x, p x) ↔ ¬ (∀ x, ¬ p x) := sorry
-example : (¬ ∃ x, p x) ↔ (∀ x, ¬ p x) := sorry
-example : (¬ ∀ x, p x) ↔ (∃ x, ¬ p x) := sorry
-
-example : (∀ x, p x → r) ↔ (∃ x, p x) → r := sorry
 example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r := by
     constructor
     ·
@@ -71,9 +64,6 @@ example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r := by
       specialize nex a
       rw [not_imp] at nex
       exact nex.right this
-
-
-example (a : α) : (∃ x, r → p x) ↔ (r → ∃ x, p x) := sorry
 
 -- Example proof of `forall_const`
 theorem my_forall_const (p q : Prop) [ne : Nonempty p] : (p → q) ↔ q := by
