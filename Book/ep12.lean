@@ -33,12 +33,10 @@ example : (∀ x, p x) ↔ ¬ (∃ x, ¬ p x) := by
 
 example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r := by
     constructor
-    ·
-      -- Pattern match the exists in the hypothesis
+    · -- Pattern match the exists in the hypothesis
       rintro ⟨x, px⟩ fa
       exact px (fa x) -- note that `a` doesn't work here instead of x
-    ·
-      intro fa
+    · intro fa
       -- The idea of this proof is to get a forall we can specialize with a.
       -- In order to do that, Classical is needed to rewrite an exists prop
       apply Classical.byContradiction
@@ -48,7 +46,6 @@ example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r := by
       have : r := by
         -- Proving the non-emptiness of a forall is essential proving existence
         have ne : Nonempty (∀ (x : α), p x) := by
-          have := Nonempty.intro a
           apply Nonempty.intro
           intro x
           -- Sometimes an intro (or equivalently a lambda) is required to enter
@@ -57,8 +54,7 @@ example (a : α) : (∃ x, p x → r) ↔ (∀ x, p x) → r := by
           conv at nex => intro; rw [not_imp]
           specialize nex x
           exact nex.left
-        rw [@forall_const r (∀ (x : α), p x) ne] at fa
-        exact fa
+        rwa [forall_const] at fa
       -- Same idea, but with a instead of x. There is definitely a better way
       -- that combines these two specializations.
       specialize nex a
